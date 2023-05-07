@@ -11,7 +11,7 @@ def withDeletion(df):
 def withMean(df):
     label_encoder = LabelEncoder()
     df["type"] = label_encoder.fit_transform(df["type"])
-    df = df.fillna(df.mean())
+    df = df.fillna(df.mean(numeric_only=True))
     return df
 
 

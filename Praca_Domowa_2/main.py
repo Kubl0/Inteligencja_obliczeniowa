@@ -2,8 +2,10 @@ import pandas as pd
 from Methods import DecisionTree
 from Methods import Preprocessing
 from Methods import NaiveBayes_KN as NBK
+from Methods import Neural
+from sklearn.utils import shuffle
 
-TRAIN_SIZE = 0.8
+TRAIN_SIZE = 0.9
 
 
 def main():
@@ -11,14 +13,19 @@ def main():
     dataM = Preprocessing.withMean(getData("./Data/winequality.csv"))
 
     # getResultsOfDT(dataD, dataM)
-    # getResultsOfNBandKNN(dataD, dataM)
-    getResultsOfKNN(dataD, dataM)
+    # getResultsOfNB(dataD, dataM)
+    # getResultsOfKNN(dataD, dataM)
+    getResultsOfNeural(dataD, dataM)
 
     return 0
 
 
 def getData(directory):
     data = pd.read_csv(directory)
+    data = shuffle(data)
+    data['quality'] = data['quality'].replace([3, 4, 5], 'low')
+    data['quality'] = data['quality'].replace([6, 7], 'medium')
+    data['quality'] = data['quality'].replace([8, 9], 'high')
     return data
 
 
@@ -27,6 +34,22 @@ def printResult(result):
     # print("Confusion Matrix: ")
     # print(result[1])
     return ""
+
+
+LAYERS = (10, 7)
+
+
+def getResultsOfNeural(dataD, dataM):
+    print("Without normalization:")
+    print("Neural w/ Deletion: ")
+    print(printResult(Neural.classify(dataD, TRAIN_SIZE, LAYERS)), end='')
+    print("Neural w/ Mean: ")
+    print(printResult(Neural.classify(dataM, TRAIN_SIZE, LAYERS)), end='')
+    print("With normalization:")
+    print("Neural w/ Deletion: ")
+    print(printResult(Neural.classify(Preprocessing.normalization(dataD), TRAIN_SIZE, LAYERS)), end='')
+    print("Neural w/ Mean: ")
+    print(printResult(Neural.classify(Preprocessing.normalization(dataM), TRAIN_SIZE, LAYERS)), end='')
 
 
 def getResultsOfDT(dataD, dataM):
@@ -54,7 +77,7 @@ def getResultsOfDT(dataD, dataM):
     print(printResult(DecisionTree.classifyMax(Preprocessing.normalization(dataM), TRAIN_SIZE, 5)), end='')
 
 
-def getResultsOfNBandKNN(dataD, dataM):
+def getResultsOfNB(dataD, dataM):
     print("Without normalization:")
     print("NB w/ Deletion: ")
     print(printResult(NBK.classifyNB(dataD, TRAIN_SIZE)), end='')
@@ -69,7 +92,7 @@ def getResultsOfNBandKNN(dataD, dataM):
 
 def getResultsOfKNN(dataD, dataM):
     print("Without normalization:")
-    for i in range(5, 10):
+    for i in range(8, 12):
         print("KNN w/ Deletion: ")
         print(printResult(NBK.classifyKN(dataD, TRAIN_SIZE, i)), end='')
         print("KNN w/ Mean: ")
