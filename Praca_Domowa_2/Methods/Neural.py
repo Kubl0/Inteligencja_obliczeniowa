@@ -5,7 +5,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 
 
-
 def classify(df, train_size, layers):
     train_set, test_set = train_test_split(df, train_size=train_size, random_state=2137)
 
