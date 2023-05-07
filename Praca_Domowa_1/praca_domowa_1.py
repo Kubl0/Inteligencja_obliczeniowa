@@ -1,6 +1,7 @@
 import numpy as np
 import pygad
 import math
+import time
 
 board_to_solve = np.array(
     [[0, 0, 0, 0, 0, 0],
@@ -48,6 +49,7 @@ parent_selection_type = "sss"
 mutation_percent_genes = 1 / sudoku_size * 100
 sol_per_pop = 200
 
+start = time.time()
 initial_population = []
 for i in range(sol_per_pop):
     initial_population.append(np.random.randint(1, 10, size=sudoku_size))
@@ -70,8 +72,11 @@ ga_instance = pygad.GA(initial_population=initial_population,
 
 ga_instance.run()
 
+end = time.time()
+
 best_solution, best_solution_fitness, best_solution_idx = ga_instance.best_solution()
 
 solution_array = np.reshape(best_solution, (sudoku_width, sudoku_width))
 
 print("Solution : \n", solution_array, best_solution_fitness)
+print("Time : ", end - start)
